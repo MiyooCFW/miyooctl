@@ -74,7 +74,7 @@ int main(int argc, char** argv)
       snd = open("/dev/miyoo_snd", O_RDWR);
       if(argc==2){
         ioctl(snd, MIYOO_SND_GET_VOLUME, &vol);
-        printf("Volume: %lu\n",vol);
+        printf("%lu",vol);
       } else if(argc==3) {
         int new_vol = atoi(argv[2]);
         if(new_vol >= 0 && new_vol <= 10) {
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   } else if (strcmp(argv[1], "version") == 0 ) {
     fb0 = open("/dev/miyoo_fb0", O_RDWR);
     ioctl(fb0, MIYOO_FB0_GET_VER, &ret);
-    printf("Version: %lu\n", ret);
+    printf("%lu", ret);
     close(fb0);
   } else {
     printhelp();
