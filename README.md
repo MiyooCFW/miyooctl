@@ -22,11 +22,17 @@ A toolchain for cross-compiling is required.
 
 Inspect the `Makefile` and adjust to your setup (e.g. `PREFIX`). It is also possible to specify these on command line, e.g. `make PREFIX=arm-linux-gnueabi-`.
 
+Run `make`.
+
 ## FP/BP
 
 This is "front porch" and "back porch" setting for the LCD controller. The expected format is a single byte in hex format, so '00' to 'FF'. The upper four bits are FP value, the lower four bits are BP value. So, for example, `A9` will set FP to 10 and BP to 9.
 
 For example, in the screen "version 2", this is what page 263 of [ST7789V datasheet](http://www.lcdwiki.com/res/MSP1141/ST7789VW_datasheet.pdf) refers to.
+
+## older version
+
+You can build the original version with `make PROG=miyooctl SOURCES=main.c`. Note that the calling parameters and functionality is somewhat different.
 
 ## Credits
 

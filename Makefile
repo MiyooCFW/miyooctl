@@ -1,5 +1,5 @@
-SOURCES = main2.c
-PROG = miyooctl2
+SOURCES ?= main2.c
+PROG ?= miyooctl2
 
 #PREFIX ?= arm-linux-
 #PREFIX ?= arm-linux-gnueabi-
