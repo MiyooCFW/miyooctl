@@ -1,4 +1,14 @@
+SOURCES ?= main2.c
+PROG ?= miyooctl2
+
+#PREFIX ?= arm-linux-
+#PREFIX ?= arm-linux-gnueabi-
+PREFIX ?= arm-buildroot-linux-musleabi-
+
+EXTRAFLAGS ?= -Wall -static
+
 all:
-	arm-linux-gcc main.c -o miyooctl -ggdb -lSDL -Os -flto 
+	$(PREFIX)gcc $(SOURCES) -o $(PROG) -ggdb -Os -flto $(EXTRAFLAGS)
+	$(PREFIX)strip $(PROG)
 clean:
-	rm -rf daemon
+	rm -rf $(PROG)
