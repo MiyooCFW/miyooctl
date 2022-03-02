@@ -3,8 +3,7 @@ PROG ?= miyooctl
 
 #PREFIX ?= arm-linux-
 #PREFIX ?= arm-linux-gnueabi-
-#PREFIX ?= arm-buildroot-linux-musleabi-
-PREFIX ?= /opt/miyoo/bin/arm-linux-
+PREFIX ?= arm-buildroot-linux-musleabi-
 
 EXTRAFLAGS ?= -Wall -static
 
