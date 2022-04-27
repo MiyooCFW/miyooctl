@@ -32,17 +32,6 @@ This is "front porch" and "back porch" setting for the LCD controller. The expec
 
 For example, in the screen "version 2", this is what page 263 of [ST7789V datasheet](http://www.lcdwiki.com/res/MSP1141/ST7789VW_datasheet.pdf) refers to.
 
-## Older version
-
-You can build the original version with `make PROG=miyooctl_v1 SOURCES=main_v1.c`. Note that the calling parameters and functionality is somewhat different. Remember to use `miyooctl_v1` instead `miyooctl` in your terminal/bash file.
-
-The commands for this version are:
-* `volume` gets colume  
-* `volume X` sets volume to X  
-* `version` gets version  
-* `setversion` setss version based on fbdriver  
-* `setversion X` sets version to X (BB 2.5/2 use 1, BB 3/35 PG use 3)
-
 ## Credits
 
 * Original version by James O'Farrell
