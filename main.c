@@ -44,9 +44,6 @@
 #define MIYOO_FB0_SET_FPBP    _IOWR(0x104, 0, unsigned long)
 #define MIYOO_FB0_GET_FPBP    _IOWR(0x105, 0, unsigned long)
 
-//#define MIYOO_KBD_GET_VER  (does not exist)
-//#define MIYOO_VIR_GET_VER  (does not exist)
-
 #define MIYOO_FBP_FILE        "/mnt/.fpbp.conf"
 #define MIYOO_LID_FILE        "/mnt/.backlight.conf"
 #define MIYOO_VOL_FILE        "/mnt/.volume.conf"
@@ -61,7 +58,7 @@
 
 #define OPTSTR                "hivV:k:m:M:s:f:"
 #define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)] [-k keypad_ver(1-4)]\n         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n"
-#define DEFAULT_PROGNAME      "miyooctl2"
+#define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
 
@@ -72,7 +69,7 @@ extern int opterr, optind;
 static void usage(char *progname, int opt) {
     if (opt == '?') fprintf(stderr, "Unknown option '-%c'\n", optopt);
     if (opt == ':') fprintf(stderr, "Missing argument for option '-%c'\n", optopt);
-    fprintf(stderr, USAGE_FMT, progname?progname:DEFAULT_PROGNAME);
+    fprintf(stderr, USAGE_FMT, (progname ? progname : DEFAULT_PROGNAME));
     exit(EXIT_FAILURE);
     /* NOTREACHED */
 }
@@ -82,25 +79,25 @@ static int parse_int(const char *s, int base, int min, int max) {
 
     int res = (int)strtol(s, &endptr, base);
     if(endptr == s || *endptr != '\0') {
-        fprintf(stderr, DEFAULT_PROGNAME": error parsing number: got %s\n", s);
+        fprintf(stderr, DEFAULT_PROGNAME ": error parsing number: got %s\n", s);
         return -1;
     } else if (errno == ERANGE || res < min || res > max) {
-        fprintf(stderr, DEFAULT_PROGNAME": number out of range %s\n", s);
+        fprintf(stderr, DEFAULT_PROGNAME ": number out of range %s\n", s);
         return -1;
     }
     return res;
 }
 
 typedef struct {
-    int just_want_info;
-    int verbose;
-    int screen_ver;
-    int fpbp;
-    int keypad_ver;
-    int rumble_ver;
-    int rumble_mode;
-    int volume;
-    char *progname;
+    int     just_want_info;
+    int     verbose;
+    int     screen_ver;
+    int     fpbp;
+    int     keypad_ver;
+    int     rumble_ver;
+    int     rumble_mode;
+    int     volume;
+    char    *progname;
 } options_t;
 
 int do_the_deed(options_t *opts);
@@ -115,35 +112,27 @@ int main(int argc, char** argv) {
             case 'i':
                 options.just_want_info = 1;
                 break;
-
             case 'v':
                 options.verbose = 1;
                 break;
-
             case 'V':
                 options.volume = parse_int(optarg, 10, 0, 10);
                 break;
-
             case 'k':
                 options.keypad_ver = parse_int(optarg, 10, 1, 4);
                 break;
-
             case 'm':
                 options.rumble_ver = parse_int(optarg, 10, 1, 4);
                 break;
-
             case 'M':
                 options.rumble_mode = parse_int(optarg, 10, 0, 1);
                 break;
-
             case 's':
                 options.screen_ver = parse_int(optarg, 10, 1, 4);
                 break;
-
             case 'f':
                 options.fpbp = parse_int(optarg, 16, 1, 4);
                 break;
-
             case 'h':
             default:
                 usage(options.progname, opt);
@@ -174,8 +163,7 @@ int do_the_deed(options_t *opts) {
         ioctl(f, MIYOO_SND_GET_VOLUME, &(current.volume));
         if(opts->volume != -1) {
             if(opts->verbose) {
-                fprintf(stdout, "%s: setting volume to %d\n", opts->progname,
-                        opts->volume);
+                fprintf(stdout, "%s: setting volume to %d\n", opts->progname, opts->volume);
             }
             ioctl(f, MIYOO_SND_SET_VOLUME, opts->volume);
         }
@@ -192,15 +180,13 @@ int do_the_deed(options_t *opts) {
         ioctl(f, MIYOO_FB0_GET_FPBP, &(current.fpbp));
         if(opts->screen_ver != -1) {
             if(opts->verbose) {
-                fprintf(stdout, "%s: setting screen version to %d\n", opts->progname,
-                        opts->screen_ver);
+                fprintf(stdout, "%s: setting screen version to %d\n", opts->progname, opts->screen_ver);
             }
             ioctl(f, MIYOO_FB0_SET_MODE, opts->screen_ver);
         }
         if(opts->fpbp != -1) {
             if(opts->verbose) {
-                fprintf(stdout, "%s: setting fp to 0x%x and bp to 0x%x\n", opts->progname,
-                        ((uint8_t)opts->fpbp&0xF0)>>4, (uint8_t)opts->fpbp&0xF);
+                fprintf(stdout, "%s: setting fp to 0x%x and bp to 0x%x\n", opts->progname, ((uint8_t)opts->fpbp&0xF0)>>4, (uint8_t)opts->fpbp&0xF);
             }
             ioctl(f, MIYOO_FB0_SET_FPBP, (uint8_t)opts->fpbp);
         }
@@ -214,8 +200,7 @@ int do_the_deed(options_t *opts) {
             /* NOTREACHED */
         }
         if(opts->verbose) {
-            fprintf(stdout, "%s: setting keypad version to %d\n", opts->progname,
-                    opts->keypad_ver);
+            fprintf(stdout, "%s: setting keypad version to %d\n", opts->progname, opts->keypad_ver);
         }
         ioctl(f, MIYOO_KBD_SET_VER, opts->keypad_ver);
         close(f);
@@ -229,15 +214,13 @@ int do_the_deed(options_t *opts) {
         }
         if(opts->rumble_ver != -1) {
             if(opts->verbose) {
-                fprintf(stdout, "%s: setting rumble motor version to %d\n", opts->progname,
-                        opts->rumble_ver);
+                fprintf(stdout, "%s: setting rumble motor version to %d\n", opts->progname, opts->rumble_ver);
             }
             ioctl(f, MIYOO_VIR_SET_VER, opts->rumble_ver);
         }
         if(opts->rumble_mode != -1) {
             if(opts->verbose) {
-                fprintf(stdout, "%s: setting rumble motor mode to %d\n", opts->progname,
-                        opts->rumble_mode);
+                fprintf(stdout, "%s: setting rumble motor mode to %d\n", opts->progname, opts->rumble_mode);
             }
             ioctl(f, MIYOO_VIR_SET_MODE, opts->rumble_mode);
         }
@@ -245,19 +228,14 @@ int do_the_deed(options_t *opts) {
     }
 
     if(opts->just_want_info) {
-        fprintf(stdout, "%s: current screen version: %d\n", opts->progname,
-                current.screen_ver);
-        fprintf(stdout, "%s: def_fb 0x%x; def_bp 0x%x; cur_fb 0x%x; cur_bp 0x%x\n",
-                opts->progname,
+        fprintf(stdout, "%s: current screen version: %d\n", opts->progname, current.screen_ver);
+        fprintf(stdout, "%s: def_fb 0x%x; def_bp 0x%x; cur_fb 0x%x; cur_bp 0x%x\n", opts->progname,
                 ((uint16_t)current.fpbp&0xF000)>>12,
                 ((uint16_t)current.fpbp&0x0F00)>>8,
                 ((uint16_t)current.fpbp&0x00F0)>>4,
                 ((uint16_t)current.fpbp&0x000F));
-        fprintf(stdout, "%s: current volume: %d\n", opts->progname,
-                current.volume);
+        fprintf(stdout, "%s: current volume: %d\n", opts->progname, current.volume);
     }
 
     return EXIT_SUCCESS;
 }
-
-
