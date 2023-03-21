@@ -108,7 +108,7 @@ int do_the_deed(options_t *opts);
 
 int main(int argc, char** argv) {
     int opt;
-    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
+    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
     opterr = 0;
 
     while ((opt = getopt(argc, argv, OPTSTR)) != EOF) {
@@ -158,10 +158,10 @@ int main(int argc, char** argv) {
 }
     
 int do_the_deed(options_t *opts) {
-    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, NULL };
+    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, -1, NULL };
     int f;
 
-    if(opts->volume != -1 || opts->just_want_info) {
+    if(opts->volume != -1) {
         if(!(f = open(MIYOO_SND_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_SND_FILE));
             return EXIT_FAILURE;
@@ -177,7 +177,7 @@ int do_the_deed(options_t *opts) {
         close(f);
     }
 
-    if(opts->screen_ver != -1 || opts->fpbp != -1 || opts->just_want_info) {
+    if(opts->screen_ver != -1 || opts->fpbp != -1) {
         if(!(f = open(MIYOO_FB0_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_FB0_FILE));
             return EXIT_FAILURE;
@@ -200,13 +200,12 @@ int do_the_deed(options_t *opts) {
         close(f);
     }
 
-    if(opts->keypad_ver != -1  || opts->just_want_info) {
+    if(opts->keypad_ver != -1) {
         if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
             return EXIT_FAILURE;
             /* NOTREACHED */
         }
-        ioctl(f, MIYOO_KBD_GET_VER, &(current.keypad_ver));
         if(opts->verbose) {
             fprintf(stdout, "%s: setting keypad version to %d\n", opts->progname, opts->keypad_ver);
         }
@@ -214,17 +213,34 @@ int do_the_deed(options_t *opts) {
         close(f);
     }
 
-    if(opts->layout_ver != -1  || opts->just_want_info) {
+    if(opts->layout_ver != -1) {
         if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
             return EXIT_FAILURE;
             /* NOTREACHED */
         }
-        ioctl(f, MIYOO_LAY_GET_VER, &(current.layout_ver));
         if(opts->verbose) {
             fprintf(stdout, "%s: setting keypad layout version to %d\n", opts->progname, opts->layout_ver);
         }
         ioctl(f, MIYOO_LAY_SET_VER, opts->layout_ver);
+        close(f);
+    }
+
+    if(opts->just_want_info) {
+        if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
+            perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
+            return EXIT_FAILURE;
+            /* NOTREACHED */
+        }
+        ioctl(f, MIYOO_KBD_GET_VER, &(current.keypad_ver));
+        ioctl(f, MIYOO_LAY_GET_VER, &(current.layout_ver));
+        close(f);
+        if(!(f = open(MIYOO_SND_FILE, O_RDWR))) {
+            perror(ERR_OPEN_FILE(MIYOO_SND_FILE));
+            return EXIT_FAILURE;
+            /* NOTREACHED */
+        }
+        ioctl(f, MIYOO_SND_GET_VOLUME, &(current.volume));
         close(f);
     }
 
@@ -250,7 +266,7 @@ int do_the_deed(options_t *opts) {
     }
 
     if(opts->just_want_info) {
-        fprintf(stdout, "%s: current screen version: %d\n", opts->progname, current.screen_ver);
+//        fprintf(stdout, "%s: current screen version: %d\n", opts->progname, current.screen_ver);
 //        fprintf(stdout, "%s: def_fb 0x%x; def_bp 0x%x; cur_fb 0x%x; cur_bp 0x%x\n", opts->progname,
 //                ((uint16_t)current.fpbp&0xF000)>>12,
 //                ((uint16_t)current.fpbp&0x0F00)>>8,
