@@ -39,6 +39,8 @@
 #define MIYOO_KBD_GET_HOTKEY  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_KBD_SET_VER     _IOWR(0x101, 0, unsigned long)
 #define MIYOO_LAYOUT_SET_VER  _IOWR(0x103, 0, unsigned long)
+#define MIYOO_KBD_GET_VER     _IOWR(0x104, 0, unsigned long)
+#define MIYOO_LAY_GET_VER     _IOWR(0x105, 0, unsigned long)
 #define MIYOO_FB0_PUT_OSD     _IOWR(0x100, 0, unsigned long)
 #define MIYOO_FB0_SET_MODE    _IOWR(0x101, 0, unsigned long)
 #define MIYOO_FB0_GET_VER     _IOWR(0x102, 0, unsigned long)
@@ -204,6 +206,7 @@ int do_the_deed(options_t *opts) {
             return EXIT_FAILURE;
             /* NOTREACHED */
         }
+        ioctl(f, MIYOO_KBD_GET_VER, &(current.keypad_ver));
         if(opts->verbose) {
             fprintf(stdout, "%s: setting keypad version to %d\n", opts->progname, opts->keypad_ver);
         }
@@ -217,6 +220,7 @@ int do_the_deed(options_t *opts) {
             return EXIT_FAILURE;
             /* NOTREACHED */
         }
+        ioctl(f, MIYOO_LAY_GET_VER, &(current.layout_ver));
         if(opts->verbose) {
             fprintf(stdout, "%s: setting keypad layout version to %d\n", opts->progname, opts->layout_ver);
         }
@@ -247,11 +251,13 @@ int do_the_deed(options_t *opts) {
 
     if(opts->just_want_info) {
         fprintf(stdout, "%s: current screen version: %d\n", opts->progname, current.screen_ver);
-        fprintf(stdout, "%s: def_fb 0x%x; def_bp 0x%x; cur_fb 0x%x; cur_bp 0x%x\n", opts->progname,
-                ((uint16_t)current.fpbp&0xF000)>>12,
-                ((uint16_t)current.fpbp&0x0F00)>>8,
-                ((uint16_t)current.fpbp&0x00F0)>>4,
-                ((uint16_t)current.fpbp&0x000F));
+//        fprintf(stdout, "%s: def_fb 0x%x; def_bp 0x%x; cur_fb 0x%x; cur_bp 0x%x\n", opts->progname,
+//                ((uint16_t)current.fpbp&0xF000)>>12,
+//                ((uint16_t)current.fpbp&0x0F00)>>8,
+//                ((uint16_t)current.fpbp&0x00F0)>>4,
+//                ((uint16_t)current.fpbp&0x000F));
+        fprintf(stdout, "%s: current keypad version: %d\n", opts->progname, current.keypad_ver);
+        fprintf(stdout, "%s: current keypad layout version: %d\n", opts->progname, current.layout_ver);
         fprintf(stdout, "%s: current volume: %d\n", opts->progname, current.volume);
     }
 
