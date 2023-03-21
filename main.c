@@ -57,7 +57,7 @@
 #define MIYOO_KBD_FILE        "/dev/miyoo_kbd"
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
-#define OPTSTR                "hivV:k:m:M:s:f:"
+#define OPTSTR                "hivV:k:l:m:M:s:f:"
 #define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-6)]\n  [-l layout_ver(1-3)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
