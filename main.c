@@ -200,7 +200,7 @@ int do_the_deed(options_t *opts) {
         close(f);
     }
 
-    if(opts->keypad_ver != -1) {
+    if(opts->keypad_ver != -1  || opts->just_want_info) {
         if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
             return EXIT_FAILURE;
@@ -214,7 +214,7 @@ int do_the_deed(options_t *opts) {
         close(f);
     }
 
-    if(opts->layout_ver != -1) {
+    if(opts->layout_ver != -1  || opts->just_want_info) {
         if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
             return EXIT_FAILURE;
