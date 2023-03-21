@@ -38,7 +38,7 @@
 #define MIYOO_SND_GET_VOLUME  _IOWR(0x101, 0, unsigned long)
 #define MIYOO_KBD_GET_HOTKEY  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_KBD_SET_VER     _IOWR(0x101, 0, unsigned long)
-#define MIYOO_LAYOUT_SET_VER  _IOWR(0x103, 0, unsigned long)
+#define MIYOO_LAY_SET_VER     _IOWR(0x103, 0, unsigned long)
 #define MIYOO_KBD_GET_VER     _IOWR(0x104, 0, unsigned long)
 #define MIYOO_LAY_GET_VER     _IOWR(0x105, 0, unsigned long)
 #define MIYOO_FB0_PUT_OSD     _IOWR(0x100, 0, unsigned long)
@@ -224,7 +224,7 @@ int do_the_deed(options_t *opts) {
         if(opts->verbose) {
             fprintf(stdout, "%s: setting keypad layout version to %d\n", opts->progname, opts->layout_ver);
         }
-        ioctl(f, MIYOO_LAYOUT_SET_VER, opts->layout_ver);
+        ioctl(f, MIYOO_LAY_SET_VER, opts->layout_ver);
         close(f);
     }
 
