@@ -38,6 +38,7 @@
 #define MIYOO_SND_GET_VOLUME  _IOWR(0x101, 0, unsigned long)
 #define MIYOO_KBD_GET_HOTKEY  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_KBD_SET_VER     _IOWR(0x101, 0, unsigned long)
+#define MIYOO_LAYOUT_SET_VER  _IOWR(0x103, 0, unsigned long)
 #define MIYOO_FB0_PUT_OSD     _IOWR(0x100, 0, unsigned long)
 #define MIYOO_FB0_SET_MODE    _IOWR(0x101, 0, unsigned long)
 #define MIYOO_FB0_GET_VER     _IOWR(0x102, 0, unsigned long)
@@ -57,7 +58,7 @@
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
 #define OPTSTR                "hivV:k:m:M:s:f:"
-#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)] [-k keypad_ver(1-4)]\n         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n"
+#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-6)]\n  [-l layout_ver(1-3)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
@@ -94,6 +95,7 @@ typedef struct {
     int     screen_ver;
     int     fpbp;
     int     keypad_ver;
+    int     layout_ver;
     int     rumble_ver;
     int     rumble_mode;
     int     volume;
@@ -119,7 +121,10 @@ int main(int argc, char** argv) {
                 options.volume = parse_int(optarg, 10, 0, 10);
                 break;
             case 'k':
-                options.keypad_ver = parse_int(optarg, 10, 1, 4);
+                options.keypad_ver = parse_int(optarg, 10, 1, 6);
+                break;
+            case 'l':
+                options.layout_ver = parse_int(optarg, 10, 1, 3);
                 break;
             case 'm':
                 options.rumble_ver = parse_int(optarg, 10, 1, 4);
@@ -203,6 +208,19 @@ int do_the_deed(options_t *opts) {
             fprintf(stdout, "%s: setting keypad version to %d\n", opts->progname, opts->keypad_ver);
         }
         ioctl(f, MIYOO_KBD_SET_VER, opts->keypad_ver);
+        close(f);
+    }
+
+    if(opts->layout_ver != -1) {
+        if(!(f = open(MIYOO_KBD_FILE, O_RDWR))) {
+            perror(ERR_OPEN_FILE(MIYOO_KBD_FILE));
+            return EXIT_FAILURE;
+            /* NOTREACHED */
+        }
+        if(opts->verbose) {
+            fprintf(stdout, "%s: setting keypad layout version to %d\n", opts->progname, opts->layout_ver);
+        }
+        ioctl(f, MIYOO_LAYOUT_SET_VER, opts->layout_ver);
         close(f);
     }
 
