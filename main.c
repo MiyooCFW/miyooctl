@@ -60,7 +60,7 @@
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
 #define OPTSTR                "hivV:k:l:m:M:s:f:"
-#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-6)]\n  [-l layout_ver(1-3)]\n"
+#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-6)]\n  [-l layout_ver(1-6)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
                 options.keypad_ver = parse_int(optarg, 10, 1, 6);
                 break;
             case 'l':
-                options.layout_ver = parse_int(optarg, 10, 1, 3);
+                options.layout_ver = parse_int(optarg, 10, 1, 6);
                 break;
             case 'm':
                 options.rumble_ver = parse_int(optarg, 10, 1, 4);
