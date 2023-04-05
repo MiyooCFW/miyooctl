@@ -25,6 +25,6 @@ jobs:
       run: cd ${{ inputs.submodule || '.' }} && make
     - uses: actions/upload-artifact@v3
       with:
-        name: miyooctl
+        name: miyooctl-musl
         path: ${{ inputs.submodule || '.' }}/miyooctl
         if-no-files-found: error # 'error', 'warn', 'ignore'; defaults to `warn`
