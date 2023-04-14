@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
                 options.screen_ver = parse_int(optarg, 10, 1, 4);
                 break;
             case 'f':
-                options.fpbp = parse_int(optarg, 16, 1, 4);
+                options.fpbp = parse_int(optarg, 16, 0, 4);
                 break;
             case 'h':
             default:
