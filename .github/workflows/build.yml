@@ -1,4 +1,4 @@
-# based on https://github.com/MiyooCFW/gmenunx/blob/master/.github/workflows/c-cpp.yml
+
 name: CI Build
 
 on:
@@ -12,10 +12,11 @@ on:
         type: string
 
 jobs:   
-  build:
-    runs-on: ubuntu-20.04
+  build-modern:
+    name: miyooctl for MiyooCFW (musl)
+    runs-on: ubuntu-22.04
     container:
-      image: miyoocfw/toolchain:latest
+      image: miyoocfw/toolchain-shared-musl:master
     steps:
     - run: echo "submodule ${{ inputs.submodule }} on ${{ github.event }}"
     - uses: actions/checkout@v3
@@ -25,6 +26,24 @@ jobs:
       run: cd ${{ inputs.submodule || '.' }} && make
     - uses: actions/upload-artifact@v3
       with:
-        name: miyooctl-musl
+        name: miyooctl (musl)
+        path: ${{ inputs.submodule || '.' }}/miyooctl
+        if-no-files-found: error # 'error', 'warn', 'ignore'; defaults to `warn`
+
+  build-legacy:
+    name: miyooctl for MiyooCFW (uClibc)
+    runs-on: ubuntu-22.04
+    container:
+      image: miyoocfw/toolchain-shared-uclibc:master
+    steps:
+    - run: echo "submodule ${{ inputs.submodule }} on ${{ github.event }}"
+    - uses: actions/checkout@v3
+    - if: inputs.submodule
+      run: git submodule update --init --depth 1 -- ${{ inputs.submodule }}
+    - name: build
+      run: cd ${{ inputs.submodule || '.' }} && make
+    - uses: actions/upload-artifact@v3
+      with:
+        name: miyooctl (uClibc)
         path: ${{ inputs.submodule || '.' }}/miyooctl
         if-no-files-found: error # 'error', 'warn', 'ignore'; defaults to `warn`
