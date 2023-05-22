@@ -38,14 +38,18 @@
 #define MIYOO_SND_GET_VOLUME  _IOWR(0x101, 0, unsigned long)
 #define MIYOO_KBD_GET_HOTKEY  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_KBD_SET_VER     _IOWR(0x101, 0, unsigned long)
+#define MIYOO_KBD_LOCK_KEY    _IOWR(0x102, 0, unsigned long) //unused
 #define MIYOO_LAY_SET_VER     _IOWR(0x103, 0, unsigned long)
 #define MIYOO_KBD_GET_VER     _IOWR(0x104, 0, unsigned long)
 #define MIYOO_LAY_GET_VER     _IOWR(0x105, 0, unsigned long)
 #define MIYOO_FB0_PUT_OSD     _IOWR(0x100, 0, unsigned long)
 #define MIYOO_FB0_SET_MODE    _IOWR(0x101, 0, unsigned long)
 #define MIYOO_FB0_GET_VER     _IOWR(0x102, 0, unsigned long)
+#define MIYOO_FB0_SET_FLIP    _IOWR(0x103, 0, unsigned long) //unused
 #define MIYOO_FB0_SET_FPBP    _IOWR(0x104, 0, unsigned long)
 #define MIYOO_FB0_GET_FPBP    _IOWR(0x105, 0, unsigned long)
+#define MIYOO_FB0_SET_TEFIX   _IOWR(0x106, 0, unsigned long)
+#define MIYOO_FB0_GET_TEFIX   _IOWR(0x107, 0, unsigned long)
 
 #define MIYOO_FBP_FILE        "/mnt/.fpbp.conf"
 #define MIYOO_LID_FILE        "/mnt/.backlight.conf"
@@ -59,8 +63,8 @@
 #define MIYOO_KBD_FILE        "/dev/miyoo_kbd"
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
-#define OPTSTR                "hivV:k:l:m:M:s:f:"
-#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)]\n  [-l layout_ver(1-6)]\n"
+#define OPTSTR                "hivV:k:l:m:M:s:f:t:"
+#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)]\n  [-l layout_ver(1-6)]\n [-t tefix(0-3)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
@@ -96,6 +100,7 @@ typedef struct {
     int     verbose;
     int     screen_ver;
     int     fpbp;
+    int     tefix;
     int     keypad_ver;
     int     layout_ver;
     int     rumble_ver;
@@ -108,7 +113,7 @@ int do_the_deed(options_t *opts);
 
 int main(int argc, char** argv) {
     int opt;
-    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
+    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
     opterr = 0;
 
     while ((opt = getopt(argc, argv, OPTSTR)) != EOF) {
@@ -128,6 +133,9 @@ int main(int argc, char** argv) {
             case 'l':
                 options.layout_ver = parse_int(optarg, 10, 1, 6);
                 break;
+            case 't':
+                options.tefix = parse_int(optarg, 10, 0, 3);
+                break;
             case 'm':
                 options.rumble_ver = parse_int(optarg, 10, 1, 4);
                 break;
@@ -138,7 +146,7 @@ int main(int argc, char** argv) {
                 options.screen_ver = parse_int(optarg, 10, 1, 4);
                 break;
             case 'f':
-                options.fpbp = parse_int(optarg, 16, 0, 4);
+                options.fpbp = parse_int(optarg, 16, 1, 4);
                 break;
             case 'h':
             default:
@@ -158,7 +166,7 @@ int main(int argc, char** argv) {
 }
     
 int do_the_deed(options_t *opts) {
-    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, -1, NULL };
+    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, NULL };
     int f;
 
     if(opts->volume != -1) {
@@ -197,6 +205,20 @@ int do_the_deed(options_t *opts) {
             }
             ioctl(f, MIYOO_FB0_SET_FPBP, (uint8_t)opts->fpbp);
         }
+        close(f);
+    }
+
+    if(opts->tefix != -1) {
+        if(!(f = open(MIYOO_FB0_FILE, O_RDWR))) {
+            perror(ERR_OPEN_FILE(MIYOO_FB0_FILE));
+            return EXIT_FAILURE;
+            /* NOTREACHED */
+        }
+        ioctl(f, MIYOO_FB0_GET_TEFIX, &(current.tefix));
+          if(opts->verbose) {
+              fprintf(stdout, "%s: setting TEfix to %d\n", opts->progname, opts->tefix);
+          }
+          ioctl(f, MIYOO_FB0_SET_TEFIX, opts->tefix);
         close(f);
     }
 
@@ -242,6 +264,13 @@ int do_the_deed(options_t *opts) {
         }
         ioctl(f, MIYOO_SND_GET_VOLUME, &(current.volume));
         close(f);
+        if(!(f = open(MIYOO_FB0_FILE, O_RDWR))) {
+            perror(ERR_OPEN_FILE(MIYOO_FB0_FILE));
+            return EXIT_FAILURE;
+            /* NOTREACHED */
+        }
+        ioctl(f, MIYOO_FB0_GET_TEFIX, &(current.tefix));
+        close(f);
     }
 
     if(opts->rumble_ver != -1 || opts->rumble_mode != -1) {
@@ -272,6 +301,7 @@ int do_the_deed(options_t *opts) {
 //                ((uint16_t)current.fpbp&0x0F00)>>8,
 //                ((uint16_t)current.fpbp&0x00F0)>>4,
 //                ((uint16_t)current.fpbp&0x000F));
+        fprintf(stdout, "%s: current TEfix method: %d\n", opts->progname, current.tefix);
         fprintf(stdout, "%s: current keypad version: %d\n", opts->progname, current.keypad_ver);
         fprintf(stdout, "%s: current keypad layout version: %d\n", opts->progname, current.layout_ver);
         fprintf(stdout, "%s: current volume: %d\n", opts->progname, current.volume);

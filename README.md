@@ -4,7 +4,7 @@ A command line program for Miyoo devices (bittboy, pocket go v1, powkiddy v90/q9
 
 ## Usage
 
-`miyooctl [-h] [-i] [-v] [-V volume(0-10)] [-k keypad_ver(1-7)] [-l layout_ver(1-6)] [-m rumble_ver(1-3)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)] [-f fpbp_hexbyte]`
+`miyooctl [-h] [-i] [-v] [-V volume(0-10)] [-k keypad_ver(1-7)] [-l layout_ver(1-6)] [-m rumble_ver(1-3)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)] [-f fpbp_hexbyte] [-t tefix(0-3)]`
 
 * `-h` prints the above help line
 * `-i` prints the information that the modules report (currently the volume, keypad version & layout)
@@ -16,8 +16,9 @@ A command line program for Miyoo devices (bittboy, pocket go v1, powkiddy v90/q9
 * `-M` sets the vibration/rumble motor on/off; 0=on, 1=off
 * `-s` sets the screen version; range 1 to 4. Note that an incorrect version will effectively disable your screen until you shut down the device.
 * `-f` sets FP/BP for the screen driver
+* `-t` sets Tearing effect FIX method of the ST7789 screen driver; range 0 to 3.
 
-**Note**: In the latest Miyoo cfw builds you can use it in the `normalboot.custom.sh` bash file located on `boot/variants/<CONSOLE_VARIANT>`
+**Note**: In the latest Miyoo cfw builds you can use it in the `normalboot.custom.sh` bash file located on `boot/<CONSOLE_VARIANT>`
 
 ## Compiling
 
