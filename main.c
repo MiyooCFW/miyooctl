@@ -42,6 +42,7 @@
 #define MIYOO_LAY_SET_VER     _IOWR(0x103, 0, unsigned long)
 #define MIYOO_KBD_GET_VER     _IOWR(0x104, 0, unsigned long)
 #define MIYOO_LAY_GET_VER     _IOWR(0x105, 0, unsigned long)
+#define MIYOO_KBD_SET_HOTKEY  _IOWR(0x106, 0, unsigned long)
 #define MIYOO_FB0_PUT_OSD     _IOWR(0x100, 0, unsigned long)
 #define MIYOO_FB0_SET_MODE    _IOWR(0x101, 0, unsigned long)
 #define MIYOO_FB0_GET_VER     _IOWR(0x102, 0, unsigned long)
