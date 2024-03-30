@@ -19,12 +19,12 @@ jobs:
       image: miyoocfw/toolchain-shared-musl:master
     steps:
     - run: echo "submodule ${{ inputs.submodule }} on ${{ github.event }}"
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - if: inputs.submodule
       run: git submodule update --init --depth 1 -- ${{ inputs.submodule }}
     - name: build
       run: cd ${{ inputs.submodule || '.' }} && make
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: miyooctl (musl)
         path: ${{ inputs.submodule || '.' }}/miyooctl
@@ -37,12 +37,12 @@ jobs:
       image: miyoocfw/toolchain-shared-uclibc:master
     steps:
     - run: echo "submodule ${{ inputs.submodule }} on ${{ github.event }}"
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - if: inputs.submodule
       run: git submodule update --init --depth 1 -- ${{ inputs.submodule }}
     - name: build
       run: cd ${{ inputs.submodule || '.' }} && make
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: miyooctl (uClibc)
         path: ${{ inputs.submodule || '.' }}/miyooctl
