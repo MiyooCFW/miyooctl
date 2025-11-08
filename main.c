@@ -52,7 +52,7 @@
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
 #define OPTSTR                "hivV:k:l:m:M:s:f:t:"
-#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]\n         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)] [-l layout_ver(1-6)]\n         [-t tefix(0-3)]\n"
+#define USAGE_FMT             "%s [-h print this help] [-i print modules' info]\n         [-v verbose output]\n         [-V volume(0-10) control]\n         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)]\n         [-s screen_ver(1-4)] [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)] [-l layout_ver(1-6)]\n         [-t tefix(0-3)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
