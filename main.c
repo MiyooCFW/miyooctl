@@ -21,6 +21,8 @@
 #define MIYOO_VIR_SET_VER     _IOWR(0x101, 0, unsigned long)
 #define MIYOO_SND_SET_VOLUME  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_SND_GET_VOLUME  _IOWR(0x101, 0, unsigned long)
+#define MIYOO_SND_JACK_STATUS _IOWR(0x102, 0, unsigned long)
+#define MIYOO_TV_JACK_STATUS  _IOWR(0x103, 0, unsigned long)
 #define MIYOO_KBD_GET_HOTKEY  _IOWR(0x100, 0, unsigned long)
 #define MIYOO_KBD_SET_VER     _IOWR(0x101, 0, unsigned long)
 #define MIYOO_KBD_LOCK_KEY    _IOWR(0x102, 0, unsigned long) //unused
@@ -50,7 +52,7 @@
 #define MIYOO_VIR_FILE        "/dev/miyoo_vir"
 
 #define OPTSTR                "hivV:k:l:m:M:s:f:t:"
-#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)]\n  [-l layout_ver(1-6)]\n [-t tefix(0-3)]\n"
+#define USAGE_FMT             "%s [-h] [-i] [-v] [-V volume(0-10)]\n         [-m rumble_ver(1-4)] [-M rumble_mode(0-1)] [-s screen_ver(1-4)]\n         [-f fpbp_hexbyte]\n         [-k keypad_ver(1-7)] [-l layout_ver(1-6)]\n         [-t tefix(0-3)]\n"
 #define DEFAULT_PROGNAME      "miyooctl"
 #define ERR_DO_THE_DEED       "the main action went wrong somehow"
 #define ERR_OPEN_FILE(x)      "open('"x"')"
@@ -92,6 +94,8 @@ typedef struct {
     int     rumble_ver;
     int     rumble_mode;
     int     volume;
+    int     jack_stat;
+    int     tvjack_stat;
     char    *progname;
 } options_t;
 
@@ -99,7 +103,7 @@ int do_the_deed(options_t *opts);
 
 int main(int argc, char** argv) {
     int opt;
-    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
+    options_t options = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, basename(argv[0]) };
     opterr = 0;
 
     while ((opt = getopt(argc, argv, OPTSTR)) != EOF) {
@@ -152,7 +156,7 @@ int main(int argc, char** argv) {
 }
     
 int do_the_deed(options_t *opts) {
-    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, NULL };
+    options_t current = { 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, NULL };
     int f;
 
     if(opts->volume != -1) {
@@ -249,6 +253,8 @@ int do_the_deed(options_t *opts) {
             /* NOTREACHED */
         }
         ioctl(f, MIYOO_SND_GET_VOLUME, &(current.volume));
+        ioctl(f, MIYOO_SND_JACK_STATUS, &(current.jack_stat));
+        ioctl(f, MIYOO_TV_JACK_STATUS, &(current.tvjack_stat));
         close(f);
         if(!(f = open(MIYOO_FB0_FILE, O_RDWR))) {
             perror(ERR_OPEN_FILE(MIYOO_FB0_FILE));
@@ -290,7 +296,8 @@ int do_the_deed(options_t *opts) {
         fprintf(stdout, "%s: current TEfix method: %d\n", opts->progname, current.tefix);
         fprintf(stdout, "%s: current keypad version: %d\n", opts->progname, current.keypad_ver);
         fprintf(stdout, "%s: current keypad layout version: %d\n", opts->progname, current.layout_ver);
-        fprintf(stdout, "%s: current volume: %d\n", opts->progname, current.volume);
+        fprintf(stdout, "%s: current jack output status: %d\n", opts->progname, current.jack_stat);
+        fprintf(stdout, "%s: current TV-jack output status: %d\n", opts->progname, current.tvjack_stat);
     }
 
     return EXIT_SUCCESS;
